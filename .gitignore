@@ -1,0 +1,7 @@
+node_modules
+# Keep environment variables and private keys out of version control
+.env
+private_key.pem
+dist/
+
+/generated/prisma

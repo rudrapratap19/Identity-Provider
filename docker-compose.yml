@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: idp_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: identity_provider
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: idp_redis
+    ports:
+      - "6379:6379"
+
+  idp_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: idp_backend
+    environment:
+      DATABASE_URL: postgresql://admin:password123@postgres:5432/identity_provider?schema=public
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: super-secret-development-key-change-in-production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+
+  idp_demo:
+    build:
+      context: .
+      dockerfile: demo/Dockerfile
+    container_name: idp_demo
+    environment:
+      PORT: 4000
+      IDP_SERVER_URL: http://idp_backend:3000
+      IDP_URL: http://localhost:3000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - idp_backend
+
+volumes:
+  postgres_data:
