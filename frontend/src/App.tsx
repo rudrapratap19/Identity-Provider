@@ -3,25 +3,32 @@ import { Toaster } from 'react-hot-toast';
 import Dashboard from './components/Dashboard';
 
 function App() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem('idp_admin_authenticated') === 'true';
+  });
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // Simple static login just to protect the dashboard from accidental views.
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === 'admin123') {
+      localStorage.setItem('idp_admin_authenticated', 'true');
       setIsAdmin(true);
     } else {
       setError('Invalid password');
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('idp_admin_authenticated');
+    setIsAdmin(false);
+  };
+
   if (isAdmin) {
     return (
       <>
         <Toaster position="top-right" />
-        <Dashboard />
+        <Dashboard onLogout={handleLogout} />
       </>
     );
   }

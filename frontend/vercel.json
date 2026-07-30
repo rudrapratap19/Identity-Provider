@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://identity-provider-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/oauth/:path*",
+      "destination": "https://identity-provider-backend.onrender.com/oauth/:path*"
+    }
+  ]
+}

@@ -14,7 +14,13 @@ interface Client {
   createdAt: string;
 }
 
-export default function Dashboard() {
+interface DashboardProps {
+  onLogout: () => void;
+}
+
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
+export default function Dashboard({ onLogout }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'clients' | 'settings'>('overview');
   const [clients, setClients] = useState<Client[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,12 +37,13 @@ export default function Dashboard() {
   const fetchClients = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/clients');
+      const res = await fetch(`${API_BASE}/api/clients`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setClients(data);
+      setClients(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
-      toast.error('Failed to load clients');
+      toast.error('Failed to load clients. Check API connection.');
     } finally {
       setIsLoading(false);
     }
@@ -56,8 +63,8 @@ export default function Dashboard() {
   };
 
   const filteredClients = clients.filter(c => 
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    c.clientId.toLowerCase().includes(searchQuery.toLowerCase())
+    c.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    c.clientId?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -65,7 +72,7 @@ export default function Dashboard() {
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        onLogout={() => window.location.reload()} 
+        onLogout={onLogout} 
       />
       
       <div className="main-content">

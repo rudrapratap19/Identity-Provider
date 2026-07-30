@@ -7,6 +7,8 @@ interface ClientModalProps {
   onSuccess: (credentials: any) => void;
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 export default function ClientModal({ onClose, onSuccess }: ClientModalProps) {
   const [name, setName] = useState('');
   const [redirectUri, setRedirectUri] = useState('');
@@ -39,7 +41,7 @@ export default function ClientModal({ onClose, onSuccess }: ClientModalProps) {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/clients/register', {
+      const res = await fetch(`${API_BASE}/api/clients/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, redirectUris: [redirectUri] })
