@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://identity-provider-backend.onrender.com/api/:path*"
+      "destination": "https://identity-provider-backend-5jai.onrender.com/api/:path*"
     },
     {
       "source": "/oauth/:path*",
-      "destination": "https://identity-provider-backend.onrender.com/oauth/:path*"
+      "destination": "https://identity-provider-backend-5jai.onrender.com/oauth/:path*"
     }
   ]
 }
